@@ -7,7 +7,10 @@ const registerUser = asyncHandler(async (req, res) => {
   // console.log(userExist);
   if (userExist) {
     res.status(400);
-    throw new Error("User alreasy exists");
+    res.json({
+      message:"User already exists"
+    });
+    throw new Error("User already exists");
   }
 
   const user = await User.create({ name, phoneNumber, password, gmail });
@@ -19,6 +22,9 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(400);
+    res.json({
+      message:"Invalid Data"
+    });
     throw new Error("Invalid user data");
   }
 });
@@ -37,6 +43,9 @@ const authUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(401);
+    res.json({
+      message: "Invalid password or mail"
+    })
     throw new Error("invalid password or email");
   }
 });
