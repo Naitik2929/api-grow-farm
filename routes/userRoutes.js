@@ -4,7 +4,7 @@ import { sendOTP, verifyOTP } from "../controllers/otpController.js";
 const router = express.Router();
 
 router.post("/", registerUser);
-// test
+// testt34w
 router.post("/auth", authUser);
 router.get("/twilio-sms/send-otp", sendOTP);
 router.get("/twilio-sms/verify-otp", verifyOTP);
