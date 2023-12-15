@@ -7,9 +7,8 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
+    gmail: {
       type: String,
-      default: ''
     },
     password: {
       type: String,
@@ -21,7 +20,7 @@ const userSchema = mongoose.Schema(
       unique: true,
     },
     description: {
-        type: String,
+      type: String,
     },
     gender: {
       type: String,
@@ -30,16 +29,16 @@ const userSchema = mongoose.Schema(
       type: String,
     },
     pincode: {
-        type: Number,
+      type: Number,
     },
     roles: {
-        type: String,
-        enum: ['Farmer','Doctor','Shopowner','Broker','Other'],
-        default: 'Farmer',
+      type: String,
+      enum: ["Farmer", "Doctor", "Shopowner", "Broker", "Other"],
+      default: "Farmer",
     },
     profilePicture: {
-        type: String,
-    }
+      type: String,
+    },
   },
   {
     timestamps: true,
