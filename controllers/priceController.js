@@ -12,7 +12,8 @@ const getPrices = async (req, res) => {
         },
       }
     );
-    res.json(response.data.records);
+    const { records } = response.data;
+    res.status(200).json(records);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
