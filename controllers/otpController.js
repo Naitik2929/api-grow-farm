@@ -14,7 +14,7 @@ const sendOTP = async (req, res) => {
       .verifications.create({ to: `+91${phoneNumber}`, channel: "sms" });
     res.status(200).send(`OTP sent successfully: ${JSON.stringify(otpRes)}`);
   } catch (error) {
-    res.send(error + " Something went wrong");
+    res.status(500).send(error + " Something went wrong");
   }
 };
 const verifyOTP = async (req, res) => {
@@ -31,7 +31,7 @@ const verifyOTP = async (req, res) => {
         .status(200)
         .send(`OTP verified successfully: ${JSON.stringify(verifyRes)}`);
     } else {
-      res.status(400).json({ error: "OTP verification failed" });
+      res.status(400).send("OTP verification failed");
     }
   } catch (error) {
     res

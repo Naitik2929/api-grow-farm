@@ -1,5 +1,6 @@
 import axios from "axios";
 const getPrices = async (req, res) => {
+  const { state, district } = req.body;
   try {
     const response = await axios.get(
       "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070",
@@ -7,8 +8,8 @@ const getPrices = async (req, res) => {
         params: {
           "api-key": process.env.PRICE_API_KEY,
           format: "json",
-          "filters[state]": "Gujarat",
-          "filters[district]": "Anand",
+          "filters[state]": state,
+          "filters[district]": district,
         },
       }
     );
