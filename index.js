@@ -18,7 +18,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Welcome to the backend of the project");
 });
 app.use("/api/users", userRoutes);
