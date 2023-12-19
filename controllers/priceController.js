@@ -13,7 +13,7 @@ const getPrices = async (req, res) => {
         },
       }
     );
-    const { records } = response.data;
+    const records = { record: response.data.records };
     res.status(200).json(records);
   } catch (error) {
     console.log(error);
