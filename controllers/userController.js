@@ -17,8 +17,10 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     res.status(200).json({
       _id: user._id,
-      phoneNumber: user.phoneNumber,
       name: user.name,
+      phoneNumber: user.phoneNumber,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     });
   } else {
     res.status(400);
@@ -33,7 +35,7 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ phoneNumber });
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
+    
     res.json({
       _id: user._id,
       name: user.name,
@@ -44,9 +46,9 @@ const authUser = asyncHandler(async (req, res) => {
   } else {
     res.status(401);
     res.json({
-      message: "Invalid password or mail"
+      message: "Invalid password or phonenumber"
     })
-    throw new Error("invalid password or email");
+    throw new Error("invalid password or phonenumber");
   }
 });
 
