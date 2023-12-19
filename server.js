@@ -11,13 +11,16 @@ dotenv.config();
 db();
 app.use(
   cors({
-    origin: "*", 
+    origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, 
+    credentials: true,
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/", (req, res) => {
+  res.send("Welcome to the backend of the project");
+});
 app.use("/api/users", userRoutes);
 app.use("/api/prices", getPrices);
 app.listen(port, () => console.log(`Server is running on ${port}...`));
