@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes.js";
 import cors from "cors";
 import { getPrices } from "./controllers/priceController.js";
 const app = express();
+
 dotenv.config();
 db();
 app.use(
