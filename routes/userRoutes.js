@@ -10,6 +10,6 @@ const router = express.Router();
 router.post("/", registerUser);
 router.get("/schemes", getScheme);
 router.post("/auth", authUser);
-router.get("/twilio-sms/send-otp", sendOTP);
-router.get("/twilio-sms/verify-otp", verifyOTP);
+router.post("/twilio-sms/send-otp", sendOTP);
+router.post("/twilio-sms/verify-otp", verifyOTP);
 export default router;
