@@ -9,7 +9,7 @@ const client = new Twilio(
 const sendOTP = async (req, res) => {
   const { phoneNumber } = req.body;
   try {
-    const otpRes = await client.verify
+    const otpRes = await client.verify.v2
       .services(process.env.TWILIO_SERVICE_SID)
       .verifications.create({ to: `+91${phoneNumber}`, channel: "sms" });
     res.status(200).send(`OTP sent successfully: ${JSON.stringify(otpRes)}`);

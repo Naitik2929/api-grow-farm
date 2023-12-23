@@ -4,7 +4,6 @@ import puppeteer from "puppeteer";
 const registerUser = asyncHandler(async (req, res) => {
   const { name, phoneNumber, password, gmail } = req.body;
   const userExist = await User.findOne({ phoneNumber });
-  // console.log(userExist);
   if (userExist) {
     res.status(400);
     res.json({
@@ -12,7 +11,6 @@ const registerUser = asyncHandler(async (req, res) => {
     });
     throw new Error("User already exists");
   }
-
   const user = await User.create({ name, phoneNumber, password, gmail });
   if (user) {
     res.status(200).json({
@@ -30,6 +28,30 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid user data");
   }
 });
+
+const setPassword = asyncHandler(async (req, res) => {
+  const { phoneNumber, password } = req.body;
+  try {
+    const user = await User.findOne({ phoneNumber });
+    if (user) {
+      user.password = password;
+      await user.save();
+      res.status(200).json({
+        message: "Password set successfully",
+      });
+    } else {
+      res.status(400).json({
+        message: "Invalid Data",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+});
+
 const authUser = asyncHandler(async (req, res) => {
   const { phoneNumber, password } = req.body;
   const user = await User.findOne({ phoneNumber });
@@ -74,9 +96,9 @@ const getScheme = async (req, res) => {
     return schemes;
   });
 
-  res.send({ "schemes": results });
+  res.send({ schemes: results });
 
   await browser.close();
 };
 
-export { registerUser, authUser, getScheme };
+export { registerUser, authUser, getScheme, setPassword };
