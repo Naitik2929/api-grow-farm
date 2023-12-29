@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
 const registerUser = asyncHandler(async (req, res) => {
   const { name, phoneNumber, password, gmail } = req.body;
   const userExist = await User.findOne({ phoneNumber });
