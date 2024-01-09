@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import axios from "axios";
-import puppeteer from "puppeteer";
+import cheerio from "cheerio";
 const getDistrict = async (pincode) => {
   try {
     const response = await axios.get(
@@ -125,32 +125,30 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 const getScheme = async (req, res) => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  const url = "https://vikaspedia.in/schemesall/schemes-for-farmers";
+  try {
+    const url = "https://vikaspedia.in/schemesall/schemes-for-farmers";
+    const response = await axios.get(url);
 
-  await page.goto(url);
+    const $ = cheerio.load(response.data);
 
-  const results = await page.evaluate(() => {
-    const schemeElements = document.querySelectorAll(".folderfile_name");
-    const descriptionElements = document.querySelectorAll("p");
+    const schemeElements = $(".folderfile_name");
+    const descriptionElements = $("p");
 
     const schemes = [];
 
-    schemeElements.forEach((schemeElement, index) => {
-      const title = schemeElement.textContent.trim();
-      const link = "https://vikaspedia.in" + schemeElement.getAttribute("href");
-      const description = descriptionElements[index].textContent.trim();
+    schemeElements.each((index, schemeElement) => {
+      const title = $(schemeElement).text().trim();
+      const link = "https://vikaspedia.in" + $(schemeElement).attr("href");
+      const description = $(descriptionElements[index]).text().trim();
 
       schemes.push({ title, description, link });
     });
 
-    return schemes;
-  });
-
-  res.send({ schemes: results });
-
-  await browser.close();
+    res.send({ schemes });
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 };
 
 export { registerUserF, registerUserS, authUser, getScheme, setPassword };
