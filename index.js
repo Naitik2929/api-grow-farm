@@ -1,4 +1,3 @@
-import path from "path";
 import db from "./config/db.js";
 import express from "express";
 const port = process.env.PORT || 8080;

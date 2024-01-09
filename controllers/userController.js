@@ -1,7 +1,20 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
+import axios from "axios";
 import puppeteer from "puppeteer";
-const registerUser = asyncHandler(async (req, res) => {
+const getDistrict = async (pincode) => {
+  try {
+    const response = await axios.get(
+      `https://api.postalpincode.in/pincode/${pincode}`
+    );
+    const district = response.data[0].PostOffice[0].District;
+    return district;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const registerUserF = asyncHandler(async (req, res) => {
   const { name, phoneNumber, password, gmail } = req.body;
   const userExist = await User.findOne({ phoneNumber });
   if (userExist) {
@@ -11,7 +24,12 @@ const registerUser = asyncHandler(async (req, res) => {
     });
     throw new Error("User already exists");
   }
-  const user = await User.create({ name, phoneNumber, password, gmail });
+  const user = await User.create({
+    name,
+    phoneNumber,
+    password,
+    gmail,
+  });
   if (user) {
     res.status(200).json({
       _id: user._id,
@@ -26,6 +44,40 @@ const registerUser = asyncHandler(async (req, res) => {
       message: "Invalid Data",
     });
     throw new Error("Invalid user data");
+  }
+});
+
+const registerUserS = asyncHandler(async (req, res) => {
+  const { gender, pincode, roles, _id } = req.body;
+  const district = await getDistrict(pincode);
+
+  const user = await User.findById(_id);
+
+  if (user) {
+    user.gender = gender;
+    user.pincode = pincode;
+    user.roles = roles;
+    user.district = district;
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      phoneNumber: updatedUser.phoneNumber,
+      gender: updatedUser.gender,
+      roles: updatedUser.roles,
+      district: updatedUser.district,
+      pincode: updatedUser.pincode,
+      createdAt: updatedUser.createdAt,
+      updatedAt: updatedUser.updatedAt,
+    });
+  } else {
+    res.status(404);
+    res.json({
+      message: "User not found",
+    });
+    throw new Error("User not found");
   }
 });
 
@@ -101,4 +153,4 @@ const getScheme = async (req, res) => {
   await browser.close();
 };
 
-export { registerUser, authUser, getScheme, setPassword };
+export { registerUserF, registerUserS, authUser, getScheme, setPassword };
