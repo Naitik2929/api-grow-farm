@@ -3,7 +3,7 @@ import Post from "../models/Post.js";
 import User from "../models/User.js";
 import { cloudinary } from "../config/cloudinary.js"
 
-const addPost = asyncHandler(async (req, res) => { //Cloudinary with postmedia for single image;
+const addPost = asyncHandler(async (req, res) => {
     try {
         const { postTitle, userId, description, postmedia } = req.body;
         const user = await User.findOne({ _id: userId });
