@@ -13,8 +13,7 @@ const sendOTP = async (req, res) => {
       .services(process.env.TWILIO_SERVICE_SID)
       .verifications.create({ to: `+91${phoneNumber}`, channel: "sms" });
     res.status(200).json({
-      message: `OTP sent successfully`,
-      details: otpRes,
+      message: `OTP sent successfully`
     });
   } catch (error) {
     res.status(500).send(error + " Something went wrong");
@@ -31,13 +30,11 @@ const verifyOTP = async (req, res) => {
 
     if (verifyRes.status === "approved") {
       res.status(200).json({
-        message: `OTP verified successfully`,
-        details: verifyRes,
+        message: `OTP verified successfully`
       });
     } else {
       res.status(400).json({
-        message: "OTP verification failed",
-        details: verifyRes,
+        message: "OTP verification failed"
       });
     }
   } catch (error) {
