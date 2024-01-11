@@ -24,7 +24,7 @@ const verifyOTP = async (req, res) => {
   console.log(phoneNumber + otp);
 
   try {
-    const verifyRes = await client.verify
+    const verifyRes = await client.verify.v2
       .services(process.env.TWILIO_SERVICE_SID)
       .verificationChecks.create({ to: `+91${phoneNumber}`, code: otp });
 
