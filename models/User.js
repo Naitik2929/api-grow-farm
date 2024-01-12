@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const userSchema = mongoose.Schema(
   {
+    // regf
     name: {
       type: String,
       required: true,
@@ -22,6 +23,8 @@ const userSchema = mongoose.Schema(
     description: {
       type: String,
     },
+
+    // regs
     gender: {
       type: String,
     },

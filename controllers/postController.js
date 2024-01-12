@@ -5,7 +5,7 @@ import { cloudinary } from "../config/cloudinary.js"
 import path from 'path'
 import DataURIParser from "datauri/parser.js";
 
-const addPost = asyncHandler(async (req, res) => { //Cloudinary with postmedia for single image;
+const addPost = asyncHandler(async (req, res) => {
     try {
         const { postTitle, userId, description } = req.body;
         console.log(req.body)

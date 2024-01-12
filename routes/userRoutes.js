@@ -1,6 +1,7 @@
 import express from "express";
 import {
-  registerUser,
+  registerUserF,
+  registerUserS,
   authUser,
   getScheme,
   setPassword,
@@ -8,7 +9,8 @@ import {
 import { sendOTP, verifyOTP } from "../controllers/otpController.js";
 const router = express.Router();
 
-router.post("/", registerUser);
+router.post("/regf", registerUserF);
+router.post("/regs", registerUserS);
 router.get("/schemes", getScheme);
 router.post("/setPassword", setPassword);
 router.post("/auth", authUser);
