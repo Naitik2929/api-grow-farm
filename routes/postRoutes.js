@@ -5,7 +5,7 @@ import {
   getUserPost,
   getPost,
   likePost,
-  addComment,
+  addComment
 } from "../controllers/postController.js";
 import multer from "multer";
 const router = express.Router();
