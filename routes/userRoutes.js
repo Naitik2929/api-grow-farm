@@ -5,6 +5,7 @@ import {
   authUser,
   getScheme,
   setPassword,
+  followUser,
 } from "../controllers/userController.js";
 import { sendOTP, verifyOTP } from "../controllers/otpController.js";
 const router = express.Router();
