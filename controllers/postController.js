@@ -2,13 +2,19 @@ import asyncHandler from "express-async-handler";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import { cloudinary } from "../config/cloudinary.js"
+import path from 'path'
+import DataURIParser from "datauri/parser.js";
 
 const addPost = asyncHandler(async (req, res) => { //Cloudinary with postmedia for single image;
     try {
-        const { postTitle, userId, description, postmedia } = req.body;
+        const { postTitle, userId, description } = req.body;
+        console.log(req.body)
         const user = await User.findOne({ _id: userId });
+        console.log(req.file)
+        const parser = new DataURIParser();
+      const file = parser.format(path.extname(req.file.originalname).toString(), req.file.buffer);
         if (user) {
-            const uploadedResponse = await cloudinary.uploader.upload(postmedia, {
+            const uploadedResponse = await cloudinary.uploader.upload(file.content, {
                 upload_preset: 'growfarm',
             });
             console.log(uploadedResponse);
@@ -41,4 +47,4 @@ const addPost = asyncHandler(async (req, res) => { //Cloudinary with postmedia f
     }
 })
 
-export {addPost};
+export { addPost };
