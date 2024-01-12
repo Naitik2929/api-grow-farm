@@ -152,5 +152,13 @@ const getScheme = async (req, res) => {
 
   await browser.close();
 };
+const followUser = async (req, res) => {
+  try {
+    
+    res.status(200).json({ message: "Successfully followed the user." });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 export { registerUserF, registerUserS, authUser, getScheme, setPassword };

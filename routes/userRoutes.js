@@ -9,6 +9,7 @@ import {
 import { sendOTP, verifyOTP } from "../controllers/otpController.js";
 const router = express.Router();
 
+router.post("/follow/:id", followUser);
 router.post("/regf", registerUserF);
 router.post("/regs", registerUserS);
 router.get("/schemes", getScheme);
