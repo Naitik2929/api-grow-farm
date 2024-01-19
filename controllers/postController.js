@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import { cloudinary } from "../config/cloudinary.js";
 import path from "path";
 import DataURIParser from "datauri/parser.js";
+import Comment from "../models/Comment.js";
 
 const addPost = asyncHandler(async (req, res) => {
   try {
@@ -79,7 +80,10 @@ const getUserPost = async (req, res) => {
 const getPost = async (req, res) => {
   const id = req.params.postId;
   try {
-    const post = await Post.findById(id).populate("user");
+    const post = await Post.findById(id)
+      .populate("user")
+      .populate("likes")
+      .populate("comments");
     res.status(200);
     res.json(post);
   } catch (error) {
@@ -91,8 +95,8 @@ const getPost = async (req, res) => {
 };
 
 const likePost = async (req, res) => {
-  const { postId, userId } = req.body;
-
+  const { userId } = req.body;
+  const { postId } = req.params;
   try {
     const post = await Post.findById(postId);
 
@@ -114,7 +118,9 @@ const likePost = async (req, res) => {
   }
 };
 const addComment = async (req, res) => {
-  const { postId, userId, commentDescription } = req.body;
+  const { postId } = req.params;
+  console.log(postId);
+  const { userId, commentDescription } = req.body;
 
   try {
     const post = await Post.findById(postId);
