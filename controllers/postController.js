@@ -9,19 +9,23 @@ const addPost = asyncHandler(async (req, res) => {
   try {
     const { postTitle, userId, description } = req.body;
     const user = await User.findOne({ _id: userId });
-    console.log(req.file);
-    const parser = new DataURIParser();
-    const file = parser.format(
-      path.extname(req.file.originalname).toString(),
-      req.file.buffer
-    );
-    if (user) {
+    const postMedia = [];
+    if (req.file) {
+      console.log(req.file);
+      const parser = new DataURIParser();
+      const file = parser.format(
+        path.extname(req.file.originalname).toString(),
+        req.file.buffer
+      );
       const uploadedResponse = await cloudinary.uploader.upload(file.content, {
         upload_preset: "growfarm",
       });
       console.log(uploadedResponse);
-      const postMedia = [];
+
       postMedia.push(uploadedResponse.url);
+    }
+
+    if (user) {
       const post = await Post.create({
         postTitle: postTitle,
         user: userId,
@@ -31,7 +35,7 @@ const addPost = asyncHandler(async (req, res) => {
       console.log(post);
       res.status(200);
       res.json({
-        postTitle: post.postTitle,
+        message: "Post added successfully",
       });
     } else {
       res.status(400);
