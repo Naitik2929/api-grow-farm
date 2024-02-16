@@ -67,9 +67,9 @@ const getAllPost = async (req, res) => {
 const getUserPost = async (req, res) => {
   const id = req.params.id;
   try {
-    const posts = await Post.find({ user: id }).populate("user");
+    const posts = await Post.find({ user: id }).select({user : 0, updatedAt: 0 , __v : 0});
     res.status(200);
-    res.json(posts);
+    res.json({result :posts});
   } catch (error) {
     res.status(500);
     res.json({
