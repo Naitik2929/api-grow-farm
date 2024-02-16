@@ -30,6 +30,8 @@ const addPost = asyncHandler(async (req, res) => {
         postMedia: postMedia,
       });
       console.log(post);
+      user.posts.push(post._id);
+      await user.save();
       res.status(200);
       res.json({
         postTitle: post.postTitle,
@@ -48,15 +50,37 @@ const addPost = asyncHandler(async (req, res) => {
     });
   }
 });
-const getAllPost = async (req, res) => {
+const getPostsForHomePage = async (req, res) => {
   try {
-    const posts = await Post.find({}).populate("user");
-    res.status(200);
-    res.json(posts);
+    const posts = await Post.aggregate([
+      {
+        $match: {
+          likes: { $exists: true, $not: { $size: 0 } },
+        },
+      },
+      {
+        $addFields: {
+          likesCount: { $size: "$likes" },
+        },
+      },
+      {
+        $match: {
+          likesCount: { $gte: 10 },
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+    res.status(200).json(posts);
   } catch (error) {
-    res.status(500);
-    res.json({
+    console.error(error);
+    res.status(500).json({
       message: "Something went wrong",
+      error: error.message,
     });
   }
 };
@@ -67,6 +91,30 @@ const getUserPost = async (req, res) => {
     res.status(200);
     res.json(posts);
   } catch (error) {
+    res.status(500);
+    res.json({
+      message: "Something went wrong",
+    });
+  }
+};
+const deletePost = async (req, res) => {
+  const id = req.params.postId;
+  try {
+    const post = await Post.findById(id);
+    if (post) {
+      await Post.findByIdAndDelete(id);
+      res.status(200);
+      res.json({
+        message: "Post deleted successfully",
+      });
+    } else {
+      res.status(404);
+      res.json({
+        message: "Post not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
     res.status(500);
     res.json({
       message: "Something went wrong",
@@ -140,4 +188,12 @@ const addComment = async (req, res) => {
   }
 };
 
-export { addPost, getAllPost, getUserPost, getPost, likePost, addComment };
+export {
+  addPost,
+  getPostsForHomePage,
+  getUserPost,
+  getPost,
+  likePost,
+  addComment,
+  deletePost,
+};

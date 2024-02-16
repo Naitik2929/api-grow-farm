@@ -6,11 +6,13 @@ import {
   getScheme,
   setPassword,
   followUser,
+  getUserProfile,
 } from "../controllers/userController.js";
 import { sendOTP, verifyOTP } from "../controllers/otpController.js";
 const router = express.Router();
 
 router.post("/follow/:id", followUser);
+router.get("/userprofile/:id", getUserProfile);
 router.post("/regf", registerUserF);
 router.post("/regs", registerUserS);
 router.get("/schemes", getScheme);

@@ -4,7 +4,7 @@ dotenv.config();
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(
-      process.env.MONGO_URI
+      "mongodb+srv://vikram:1234@cluster0.ial2sfq.mongodb.net/GrowFarm"
     );
 
     console.log(`MongoDB connected: ${conn.connection.host}`);
