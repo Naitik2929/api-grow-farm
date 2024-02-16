@@ -10,19 +10,23 @@ const addPost = asyncHandler(async (req, res) => {
   try {
     const { postTitle, userId, description } = req.body;
     const user = await User.findOne({ _id: userId });
-    console.log(req.file);
-    const parser = new DataURIParser();
-    const file = parser.format(
-      path.extname(req.file.originalname).toString(),
-      req.file.buffer
-    );
-    if (user) {
+    const postMedia = [];
+    if (req.file) {
+      console.log(req.file);
+      const parser = new DataURIParser();
+      const file = parser.format(
+        path.extname(req.file.originalname).toString(),
+        req.file.buffer
+      );
       const uploadedResponse = await cloudinary.uploader.upload(file.content, {
         upload_preset: "growfarm",
       });
       console.log(uploadedResponse);
-      const postMedia = [];
+
       postMedia.push(uploadedResponse.url);
+    }
+
+    if (user) {
       const post = await Post.create({
         postTitle: postTitle,
         user: userId,
@@ -34,7 +38,7 @@ const addPost = asyncHandler(async (req, res) => {
       await user.save();
       res.status(200);
       res.json({
-        postTitle: post.postTitle,
+        message: "Post added successfully",
       });
     } else {
       res.status(400);
@@ -87,9 +91,9 @@ const getPostsForHomePage = async (req, res) => {
 const getUserPost = async (req, res) => {
   const id = req.params.id;
   try {
-    const posts = await Post.find({ user: id }).populate("user");
+    const posts = await Post.find({ user: id }).select({user : 0, updatedAt: 0 , __v : 0});
     res.status(200);
-    res.json(posts);
+    res.json({result :posts});
   } catch (error) {
     res.status(500);
     res.json({
