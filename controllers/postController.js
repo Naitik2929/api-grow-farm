@@ -56,30 +56,32 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    const posts = await Post.aggregate([
-      {
-        $match: {
-          likes: { $exists: true, $not: { $size: 0 } },
-        },
-      },
-      {
-        $addFields: {
-          likesCount: { $size: "$likes" },
-        },
-      },
-      {
-        $match: {
-          likesCount: { $gte: 10 },
-        },
-      },
-      {
-        $sort: { createdAt: -1 },
-      },
-      {
-        $limit: 10,
-      },
-    ]);
-    res.status(200).json(posts);
+    // const posts = await Post.aggregate([
+    //   {
+    //     $match: {
+    //       likes: { $exists: true, $not: { $size: 0 } },
+    //     },
+    //   },
+    //   {
+    //     $addFields: {
+    //       likesCount: { $size: "$likes" },
+    //     },
+    //   },
+    //   {
+    //     $match: {
+    //       likesCount: { $gte: 10 },
+    //     },
+    //   },
+    //   {
+    //     $sort: { createdAt: -1 },
+    //   },
+    //   {
+    //     $limit: 10,
+    //   },
+    // ]);
+    // res.status(200).json(posts);
+    const latestPosts = await Post.find().sort({ createdAt: -1 }).limit(10);
+    res.status(200).json(latestPosts);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -91,9 +93,13 @@ const getPostsForHomePage = async (req, res) => {
 const getUserPost = async (req, res) => {
   const id = req.params.id;
   try {
-    const posts = await Post.find({ user: id }).select({user : 0, updatedAt: 0 , __v : 0});
+    const posts = await Post.find({ user: id }).select({
+      user: 0,
+      updatedAt: 0,
+      __v: 0,
+    });
     res.status(200);
-    res.json({result :posts});
+    res.json({ result: posts });
   } catch (error) {
     res.status(500);
     res.json({

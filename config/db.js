@@ -3,11 +3,10 @@ import dotenv from "dotenv";
 dotenv.config();
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(
-      "mongodb+srv://vikram:1234@cluster0.ial2sfq.mongodb.net/GrowFarm"
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(
+      `MongoDB connected: ${conn.connection.name} - ${conn.connection.host}`
     );
-
-    console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
     console.log(`Error: ${error}`);
     process.exit(1);

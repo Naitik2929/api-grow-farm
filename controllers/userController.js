@@ -144,7 +144,6 @@ const getScheme = async (req, res) => {
 
       schemes.push({ title, description, link });
     });
-
     return schemes;
   });
 
@@ -154,6 +153,18 @@ const getScheme = async (req, res) => {
 };
 const followUser = async (req, res) => {
   try {
+    const id = req.params.id;
+    const follower = req.body.userId;
+    const user = await User.findById(id);
+    const currentUser = await User.findById(follower);
+    if (user.followers.includes(follower)) {
+      res.status(400).json({ message: "You already follow the user." });
+      return;
+    }
+    user.followers.push(follower);
+    currentUser.following.push(id);
+    await user.save();
+    await currentUser.save();
     res.status(200).json({ message: "Successfully followed the user." });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
