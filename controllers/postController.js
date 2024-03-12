@@ -56,8 +56,24 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    const latestPosts = await Post.find().sort({ createdAt: -1 }).limit(10);
-    res.status(200).json(latestPosts);
+    const { userId } = req.body;
+    const user = await User.findOne({ _id: userId });
+    const { following } = user;
+    let homePosts = await Post.find({ user: { $in: following } }).populate(
+      "user",
+      { name: 1, roles: 1 }
+    );
+    homePosts = homePosts.map((post) => ({
+      ...post.toObject(),
+      name: post.user.name,
+      roles: post.user.roles,
+    }));
+    homePosts.forEach((post) => {
+      delete post.user;
+      delete post.__v;
+      delete post.updatedAt;
+    });
+    res.status(200).json({ result: homePosts });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -99,6 +115,16 @@ const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(id);
     if (post) {
+      const publicId = post.postMedia[0];
+
+      let cloudinary_publicId = publicId.split("/").pop();
+      cloudinary_publicId = cloudinary_publicId.replace(".jpg", "");
+      // console.log(publicId)
+      cloudinary.v2.api.delete_resources([cloudinary_publicId], {
+        type: "upload",
+        resource_type: "image",
+      });
+
       await Post.findByIdAndDelete(id);
       res.status(200);
       res.json({
