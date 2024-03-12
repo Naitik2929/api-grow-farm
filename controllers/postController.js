@@ -67,6 +67,8 @@ const getPostsForHomePage = async (req, res) => {
     }));
     homePosts.forEach((post)=>{
       delete post.user;
+      delete post.__v;
+      delete post.updatedAt;
     })
     res.status(200).json({result: homePosts});
   } catch (error) {
@@ -110,6 +112,12 @@ const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(id);
     if (post) {
+      publicId = post.postMedia[0].spilt('/').pop()
+      publicId = publicId.replace('.jpg', '');
+      console.log(publicId)
+      cloudinary.uploader.destroy(publicId).then(result=>{
+        console.log(result)
+      })
       await Post.findByIdAndDelete(id);
       res.status(200);
       res.json({
