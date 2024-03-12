@@ -56,32 +56,19 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    // const posts = await Post.aggregate([
-    //   {
-    //     $match: {
-    //       likes: { $exists: true, $not: { $size: 0 } },
-    //     },
-    //   },
-    //   {
-    //     $addFields: {
-    //       likesCount: { $size: "$likes" },
-    //     },
-    //   },
-    //   {
-    //     $match: {
-    //       likesCount: { $gte: 10 },
-    //     },
-    //   },
-    //   {
-    //     $sort: { createdAt: -1 },
-    //   },
-    //   {
-    //     $limit: 10,
-    //   },
-    // ]);
-    // res.status(200).json(posts);
-    const latestPosts = await Post.find().sort({ createdAt: -1 }).limit(10);
-    res.status(200).json(latestPosts);
+    const {userId} = req.body;
+    const user = await User.findOne({ _id: userId });
+    const {following} = user ;
+    let homePosts = await Post.find({"user": {$in : following}}).populate("user",{"name":1,"roles":1});
+    homePosts = homePosts.map((post)=>({
+      ...post.toObject(),
+      name: post.user.name,
+      roles: post.user.roles
+    }));
+    homePosts.forEach((post)=>{
+      delete post.user;
+    })
+    res.status(200).json({result: homePosts});
   } catch (error) {
     console.error(error);
     res.status(500).json({
