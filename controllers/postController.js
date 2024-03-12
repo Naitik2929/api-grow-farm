@@ -93,20 +93,31 @@ const getPostsForHomePage = async (req, res) => {
 const getUserPost = async (req, res) => {
   const id = req.params.id;
   try {
-    const posts = await Post.find({ user: id }).select({
-      user: 0,
-      updatedAt: 0,
-      __v: 0,
+    let posts = await Post.find({ user: id })
+      .select({
+        updatedAt: 0,
+        __v: 0,
+      })
+      .populate({
+        path: "user",
+        select: "name roles",
+      });
+    posts = posts.map((post) => ({
+      ...post.toObject(),
+      name: post.user.name,
+      roles: post.user.roles,
+    }));
+    posts.forEach((post) => {
+      delete post.user;
     });
-    res.status(200);
-    res.json({ result: posts });
+    res.status(200).json({ result: posts });
   } catch (error) {
-    res.status(500);
-    res.json({
+    res.status(500).json({
       message: "Something went wrong",
     });
   }
 };
+
 const deletePost = async (req, res) => {
   const id = req.params.postId;
   try {
