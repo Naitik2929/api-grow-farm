@@ -56,30 +56,6 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    // const posts = await Post.aggregate([
-    //   {
-    //     $match: {
-    //       likes: { $exists: true, $not: { $size: 0 } },
-    //     },
-    //   },
-    //   {
-    //     $addFields: {
-    //       likesCount: { $size: "$likes" },
-    //     },
-    //   },
-    //   {
-    //     $match: {
-    //       likesCount: { $gte: 10 },
-    //     },
-    //   },
-    //   {
-    //     $sort: { createdAt: -1 },
-    //   },
-    //   {
-    //     $limit: 10,
-    //   },
-    // ]);
-    // res.status(200).json(posts);
     const latestPosts = await Post.find().sort({ createdAt: -1 }).limit(10);
     res.status(200).json(latestPosts);
   } catch (error) {
