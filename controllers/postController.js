@@ -56,21 +56,21 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    const {userId} = req.body;
+    const { userId } = req.body;
     const user = await User.findOne({ _id: userId });
-    const {following} = user ;
-    let homePosts = await Post.find({"user": {$in : following}}).populate("user",{"name":1,"roles":1});
-    homePosts = homePosts.map((post)=>({
+    const { following } = user;
+    let homePosts = await Post.find({ "user": { $in: following } }).populate("user", { "name": 1, "roles": 1 });
+    homePosts = homePosts.map((post) => ({
       ...post.toObject(),
       name: post.user.name,
       roles: post.user.roles
     }));
-    homePosts.forEach((post)=>{
+    homePosts.forEach((post) => {
       delete post.user;
       delete post.__v;
       delete post.updatedAt;
     })
-    res.status(200).json({result: homePosts});
+    res.status(200).json({ result: homePosts });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -107,17 +107,21 @@ const getUserPost = async (req, res) => {
   }
 };
 
+
 const deletePost = async (req, res) => {
   const id = req.params.postId;
   try {
     const post = await Post.findById(id);
     if (post) {
-      publicId = post.postMedia[0].spilt('/').pop()
-      publicId = publicId.replace('.jpg', '');
-      console.log(publicId)
-      cloudinary.uploader.destroy(publicId).then(result=>{
-        console.log(result)
-      })
+      const publicId = post.postMedia[0]
+
+      let cloudinary_publicId = publicId.split('/').pop()
+      cloudinary_publicId = cloudinary_publicId.replace('.jpg', '');
+      // console.log(publicId)
+      cloudinary.v2.api
+        .delete_resources([cloudinary_publicId],
+          { type: 'upload', resource_type: 'image' })
+        
       await Post.findByIdAndDelete(id);
       res.status(200);
       res.json({
