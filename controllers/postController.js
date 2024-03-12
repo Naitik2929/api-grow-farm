@@ -56,7 +56,7 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId  = req.params.id;
     const user = await User.findOne({ _id: userId });
     const { following } = user;
     let homePosts = await Post.find({ "user": { $in: following } }).populate("user", { "name": 1, "roles": 1 });

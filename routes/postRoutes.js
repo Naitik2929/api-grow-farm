@@ -18,7 +18,7 @@ router.post("/comment/:postId", addComment);
 router.post("/addpost", multerUploads, addPost);
 router.delete("/deletepost/:postId", deletePost);
 router.get("/getpost/:postId", getPost);
-router.get("/gethomepagepost", getPostsForHomePage);
+router.get("/gethomepagepost/:id", getPostsForHomePage);
 router.get("/getuserpost/:id", getUserPost);
 
 export default router;
