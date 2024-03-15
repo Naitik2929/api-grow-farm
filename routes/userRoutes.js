@@ -10,13 +10,16 @@ import {
   unFollowUser,
 } from "../controllers/userController.js";
 import { sendOTP, verifyOTP } from "../controllers/otpController.js";
+import multer from "multer";
 const router = express.Router();
+const storage = multer.memoryStorage();
+const multerUploads = multer({ storage }).single("file");
 
 router.post("/follow/:id", followUser);
 router.post("/unfollow/:id", unFollowUser);
 router.get("/userprofile/:id", getUserProfile);
 router.post("/regf", registerUserF);
-router.post("/regs", registerUserS);
+router.post("/regs",multerUploads, registerUserS);
 router.get("/schemes", getScheme);
 router.post("/setPassword", setPassword);
 router.post("/auth", authUser);

@@ -2,6 +2,10 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import axios from "axios";
 import puppeteer from "puppeteer";
+import { cloudinary } from "../config/cloudinary.js";
+import path from "path";
+import DataURIParser from "datauri/parser.js";
+
 const getDistrict = async (pincode) => {
   try {
     const response = await axios.get(
@@ -50,15 +54,29 @@ const registerUserF = asyncHandler(async (req, res) => {
 const registerUserS = asyncHandler(async (req, res) => {
   const { gender, pincode, roles, _id } = req.body;
   const district = await getDistrict(pincode);
-
+  var profilePicture;
   const user = await User.findById(_id);
+  if (req.file) {
+    console.log(req.file);
+    const parser = new DataURIParser();
+    const file = parser.format(
+      path.extname(req.file.originalname).toString(),
+      req.file.buffer
+    );
+    const uploadedResponse = await cloudinary.uploader.upload(file.content, {
+      upload_preset: "growfarm",
+    });
+    console.log(uploadedResponse);
+
+    profilePicture = uploadedResponse.url;
+  }
 
   if (user) {
     user.gender = gender;
     user.pincode = pincode;
     user.roles = roles;
     user.district = district;
-
+    user.profilePicture = profilePicture;
     const updatedUser = await user.save();
 
     res.status(200).json({
@@ -69,6 +87,7 @@ const registerUserS = asyncHandler(async (req, res) => {
       roles: updatedUser.roles,
       district: updatedUser.district,
       pincode: updatedUser.pincode,
+      profilePicture: updatedUser.profilePicture,
       createdAt: updatedUser.createdAt,
       updatedAt: updatedUser.updatedAt,
     });

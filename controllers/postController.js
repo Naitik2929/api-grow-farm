@@ -118,7 +118,8 @@ const deletePost = async (req, res) => {
       const publicId = post.postMedia[0];
 
       let cloudinary_publicId = publicId.split("/").pop();
-      cloudinary_publicId = cloudinary_publicId.replace(".jpg", "");
+      cloudinary_publicId = cloudinary_publicId.slice(0,-4)
+
       // console.log(publicId)
       cloudinary.v2.api.delete_resources([cloudinary_publicId], {
         type: "upload",
