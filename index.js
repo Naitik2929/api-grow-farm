@@ -3,7 +3,7 @@ import express from "express";
 const port = process.env.PORT || 8080;
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
-import postRoutes from "./routes/postRoutes.js"
+import postRoutes from "./routes/postRoutes.js";
 import cors from "cors";
 import { getPrices } from "./controllers/priceController.js";
 const app = express();
@@ -23,6 +23,6 @@ app.get("/", (req, res) => {
   res.send("Welcome to the backend of the project");
 });
 app.use("/api/users", userRoutes);
-app.use("/api/prices", getPrices);
-app.use("/api/post",postRoutes);
+app.get("/api/prices/:pincode", getPrices);
+app.use("/api/post", postRoutes);
 app.listen(port, () => console.log(`Server is running on ${port}...`));
