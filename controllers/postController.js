@@ -56,7 +56,7 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    const userId  = req.params.id;
+    const userId = req.params.id;
     const user = await User.findOne({ _id: userId });
     const { following } = user;
     let homePosts = await Post.find({ user: { $in: following } }).populate(
@@ -127,6 +127,11 @@ const deletePost = async (req, res) => {
       });
 
       await Post.findByIdAndDelete(id);
+      const user = await User.findById(post.user);
+      if (user) {
+        user.posts.pull(id);
+        await user.save();
+      }
       res.status(200);
       res.json({
         message: "Post deleted successfully",
