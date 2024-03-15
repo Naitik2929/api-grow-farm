@@ -56,7 +56,7 @@ const addPost = asyncHandler(async (req, res) => {
 });
 const getPostsForHomePage = async (req, res) => {
   try {
-    const userId  = req.params.id;
+    const userId = req.params.id;
     const user = await User.findOne({ _id: userId });
     const { following } = user;
     let homePosts = await Post.find({ user: { $in: following } }).populate(
@@ -119,13 +119,17 @@ const deletePost = async (req, res) => {
 
       let cloudinary_publicId = publicId.split("/").pop();
       cloudinary_publicId = cloudinary_publicId.replace(".jpg", "");
-      // console.log(publicId)
       cloudinary.v2.api.delete_resources([cloudinary_publicId], {
         type: "upload",
         resource_type: "image",
       });
 
       await Post.findByIdAndDelete(id);
+      const user = await User.findById(post.user);
+      if (user) {
+        user.posts.pull(id);
+        await user.save();
+      }
       res.status(200);
       res.json({
         message: "Post deleted successfully",
