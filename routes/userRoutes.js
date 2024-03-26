@@ -7,6 +7,7 @@ import {
   setPassword,
   followUser,
   getUserProfile,
+  getUsers,
   unFollowUser,
 } from "../controllers/userController.js";
 import { sendOTP, verifyOTP } from "../controllers/otpController.js";
@@ -18,6 +19,7 @@ const multerUploads = multer({ storage }).single("file");
 router.post("/follow/:id", followUser);
 router.post("/unfollow/:id", unFollowUser);
 router.get("/userprofile/:id", getUserProfile);
+router.get("/getuserslist/:id", getUsers);
 router.post("/regf", registerUserF);
 router.post("/regs",multerUploads, registerUserS);
 router.get("/schemes", getScheme);

@@ -5,7 +5,20 @@ import puppeteer from "puppeteer";
 import { cloudinary } from "../config/cloudinary.js";
 import path from "path";
 import DataURIParser from "datauri/parser.js";
-
+const getUsers = asyncHandler(async (req, res) => {
+  try {
+    console.log(req.params.id);
+    const id = req.params.id;
+    const currentUser = await User.findById(id);
+    const users = await User.find({
+      $and: [{ _id: { $ne: id } }, { _id: { $nin: currentUser.following } }],
+    });
+    res.send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 const getDistrict = async (pincode) => {
   try {
     const response = await axios.get(
@@ -231,4 +244,5 @@ export {
   getUserProfile,
   followUser,
   unFollowUser,
+  getUsers,
 };
