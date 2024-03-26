@@ -7,7 +7,6 @@ import path from "path";
 import DataURIParser from "datauri/parser.js";
 const getUsers = asyncHandler(async (req, res) => {
   try {
-    console.log(req.params.id);
     const id = req.params.id;
     const currentUser = await User.findById(id);
     const users = await User.find({
