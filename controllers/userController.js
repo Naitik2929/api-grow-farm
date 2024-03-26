@@ -234,6 +234,29 @@ const getUserProfile = async (req, res) => {
     res.status(404).json({ message: "User not found" });
   }
 };
+
+const getFollowers = async(req,res)=>{
+  const id = req.params.id;
+  const user = await User.findById(id);
+  if (user) {
+    const followers = User.find({_id :{$in: user.followers} });
+
+    res.status(200).json({result: followers});
+  } else {
+    res.status(404).json({ message: "User not found" });
+  }
+}
+const getFollowing = async(req,res)=>{
+  const id = req.params.id;
+  const user = await User.findById(id);
+  if (user) {
+    const following = User.find({_id: {$in : user.following } });
+
+    res.status(200).json({result: following});
+  } else {
+    res.status(404).json({ message: "User not found" });
+  }
+}
 export {
   registerUserF,
   registerUserS,
@@ -244,4 +267,6 @@ export {
   followUser,
   unFollowUser,
   getUsers,
+  getFollowers,
+  getFollowing
 };

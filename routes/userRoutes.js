@@ -9,6 +9,8 @@ import {
   getUserProfile,
   getUsers,
   unFollowUser,
+  getFollowers,
+  getFollowing,
 } from "../controllers/userController.js";
 import { sendOTP, verifyOTP } from "../controllers/otpController.js";
 import multer from "multer";
@@ -20,6 +22,8 @@ router.post("/follow/:id", followUser);
 router.post("/unfollow/:id", unFollowUser);
 router.get("/userprofile/:id", getUserProfile);
 router.get("/getuserslist/:id", getUsers);
+router.get("/getfollowers/:id",getFollowers);
+router.get("/getfollowing/:id",getFollowing);
 router.post("/regf", registerUserF);
 router.post("/regs",multerUploads, registerUserS);
 router.get("/schemes", getScheme);
