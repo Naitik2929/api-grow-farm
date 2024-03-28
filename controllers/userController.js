@@ -12,10 +12,17 @@ const getUsers = asyncHandler(async (req, res) => {
     const users = await User.find({
       $and: [{ _id: { $ne: id } }, { _id: { $nin: currentUser.following } }],
     });
-    res.send(users);
+    const result = users.map((user) => {
+      return {
+        _id: user._id,
+        name: user.name,
+        roles: user.roles,
+      };
+    });
+    res.status(200).json({ users: result });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 const getDistrict = async (pincode) => {
@@ -235,28 +242,28 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-const getFollowers = async(req,res)=>{
+const getFollowers = async (req, res) => {
   const id = req.params.id;
   const user = await User.findById(id);
   if (user) {
     const followers = await User.find({_id :{$in: user.followers} }).select({name:1,roles:1,_id:1});
 
-    res.status(200).json({result: followers});
+    res.status(200).json({ result: followers });
   } else {
     res.status(404).json({ message: "User not found" });
   }
-}
-const getFollowing = async(req,res)=>{
+};
+const getFollowing = async (req, res) => {
   const id = req.params.id;
   const user = await User.findById(id);
   if (user) {
-    const following = await User.find({_id: {$in : user.following } }).select({name:1,roles:1,_id:1});
+    const following = User.find({_id: {$in : user.following } });
 
-    res.status(200).json({result : following});
+    res.status(200).json({result: following});
   } else {
     res.status(404).json({ message: "User not found" });
   }
-}
+};
 export {
   registerUserF,
   registerUserS,
@@ -268,5 +275,5 @@ export {
   unFollowUser,
   getUsers,
   getFollowers,
-  getFollowing
+  getFollowing,
 };
