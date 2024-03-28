@@ -12,7 +12,7 @@ const getUsers = asyncHandler(async (req, res) => {
     const users = await User.find({
       $and: [{ _id: { $ne: id } }, { _id: { $nin: currentUser.following } }],
     });
-    res.send(users);
+    res.status(200).json({result: users});
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
